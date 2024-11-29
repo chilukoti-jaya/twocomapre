@@ -1,0 +1,35 @@
+import pandas as pd
+
+# Assuming df1 has columns: empid, devloginname, appname
+# Assuming df2 has columns: id, uatloginname, idtype
+
+# Step 1: Merge the DataFrames with matching conditions
+matched_records = pd.merge(
+    df1,
+    df2,
+    left_on=['empid', 'devloginname'],
+    right_on=['id', 'uatloginname'],
+    how='inner'
+)
+
+# Step 2: Find records in df1 that don't have a match
+unmatched_df1 = pd.merge(
+    df1,
+    df2,
+    left_on=['empid', 'devloginname'],
+    right_on=['id', 'uatloginname'],
+    how='left',
+    indicator=True
+)
+unmatched_df1 = unmatched_df1[unmatched_df1['_merge'] == 'left_only'].drop(columns=['_merge'])
+
+# Step 3: Find records in df2 that don't have a match
+unmatched_df2 = pd.merge(
+    df1,
+    df2,
+    left_on=['empid', 'devloginname'],
+    right_on=['id', 'uatloginname'],
+    how='right',
+    indicator=True
+)
+unmatched_df2 = unmatched_df2[unmatched_df2['_merge'] == 'right_only'].drop(columns=['_merge'])
